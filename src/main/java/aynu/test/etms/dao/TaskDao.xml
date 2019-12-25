@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper:根标签，namespace：命名空间，随便写，一般保证命名空间唯一 -->
+<mapper namespace="aynu.test.etms.dao.TaskDao">
+    <!--添加任务-->
+    <insert id="addTask" parameterType="Task">
+        insert into tasks values (#{tid},#{tname},#{tstart},#{tend},#{tuser},#{ttxt},#{tstate},#{mid})
+    </insert>
+    <!--查询所有任务-->
+    <select id="taskSelect" parameterType="string" resultType="Task">
+        select * from tasks where mid = #{mid}
+    </select>
+    <!--根据Id查询任务-->
+    <select id="findByTid" parameterType="string" resultType="Task">
+        select * from tasks where tid=#{tid}
+    </select>
+    <!--根据mid查询任务-->
+    <select id="findTask" parameterType="string" resultType="Task">
+        select * from tasks where tstate=1 and mid = #{mid}
+    </select>
+    <!--根据tid和tstate修改状态-->
+    <update id="editState" parameterType="string" >
+          update tasks set tstate = #{tstate} where tid=#{tid}
+    </update>
+    <!--根据mid寻找未实施的任务-->
+    <select id="findUntask" parameterType="string" resultType="Task">
+        select * from tasks where tstate=0 and mid = #{mid}
+    </select>
+    <!--根据id修改-->
+    <update id="updateTask" parameterType="Task">
+          update tasks set tname=#{tname},tstart=#{tstart},tend=#{tend},tuser=#{tuser},ttxt=#{ttxt},tstate=#{tstate} where tid=#{tid}
+    </update>
+
+</mapper>

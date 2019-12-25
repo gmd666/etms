@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper:根标签，namespace：命名空间，随便写，一般保证命名空间唯一 -->
+<mapper namespace="aynu.test.etms.dao.UserDao">
+    <!--登陆验证-->
+    <select id="findUserByLogin" resultType="User" parameterType="String">
+        select * from users where username = #{username} and password = #{password} and state!=0;
+    </select>
+    <!--获取数量-->
+    <select id="getCount" resultType="Integer">
+        select count(*) from users where  state!=0;
+    </select>
+    <!--添加到数据库-->
+    <insert id="addEmployee" parameterType="User">
+        insert into users
+         values (#{id},#{eid},#{username},#{password},#{identify},#{truename},#{gender},#{borndate},#{degree},
+         #{position},#{swt},#{state},#{facelogin},#{works},#{bid},#{bname})
+    </insert>
+   <!--检查是否重名,如果重名返回false,没有返回true-->
+    <select id="findByUserName" resultType="Boolean" parameterType="string">
+         <![CDATA[ select count(id) from users where username=#{username}]]>
+    </select>
+    <!--返回所有人员-->
+    <select id="userSelect" resultType="User">
+        select * from users where  state!=0;
+    </select>
+    <!--根据ID查询返回user-->
+    <select id="findById" resultType="User" parameterType="string">
+          select  * from users where id=#{id} and state!=0
+    </select>
+    <!--根据id进行假删除，设置state=0-->
+    <update id="deleteById" parameterType="string">
+        update users set state=0 where id = #{id}
+    </update>
+    <!--查找状态为1并且身份是员工的人-->
+    <select id="allotUser" resultType="User">
+        select * from users where state = 1 and identify = '员工'
+    </select>
+    <!--查找所有的主管-->
+    <select id="getBoss" resultType="User">
+        select * from users where state=1 and identify = '主管'
+    </select>
+    <!--分配部门-->
+    <update id="allotBoss" parameterType="string">
+       update users set bid=#{bid},bname=#{bname},state=2 where eid=#{eid}
+    </update>
+    <!--查找删除的员工-->
+    <select id="dataReturn" resultType="User">
+        select * from users where state=0
+    </select>
+    <!--根据id恢复员工-->
+    <update id="returnById" parameterType="string">
+       update users set state = 1 where id = #{id}
+    </update>
+    <!--根据bid 来查询员工-->
+    <select id="findByBid" parameterType="string" resultType="User">
+        select * from users where bid=#{bid}
+    </select>
+    <!--根据eid查询员工-->
+    <select id="findByEid" parameterType="string" resultType="User">
+        select * from users where eid=#{eid}
+    </select>
+</mapper>

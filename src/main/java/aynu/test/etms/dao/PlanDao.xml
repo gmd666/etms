@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper:根标签，namespace：命名空间，随便写，一般保证命名空间唯一 -->
+<mapper namespace="aynu.test.etms.dao.PlanDao">
+    <!--根据Tid查询，查询计划-->
+    <select id="findByTid" parameterType="string" resultType="Plan">
+        select * from plans where tid = #{tid} and pstate!=-1
+    </select>
+    <!--根据pid -->
+    <select id="findByPid" parameterType="string" resultType="Plan">
+        select * from plans where pid = #{pid}
+    </select>
+    <!--根据姓名查询-->
+    <select id="findByUsername" parameterType="string" resultType="Task">
+        select * from tasks where tuser = #{username}
+    </select>
+    <!--添加计划-->
+    <insert id="addPlan" parameterType="Plan">
+        insert into plans values (#{pid},#{pname},#{ptxt},#{pstart},#{pend},#{pstate},#{rstate},#{rinfo},#{tid});
+    </insert>
+    <!--添加后更改任务状态-->
+    <update id="setTaskState" parameterType="string">
+        update tasks set tstate=1 where tid = #{tid}
+    </update>
+    <!--更改任务状态-->
+    <update id="updateByPid" parameterType="Plan">
+        update plans set pstate = #{pstate},rstate=#{rstate},rinfo=#{rinfo} where pid=#{pid}
+    </update>
+    <!--根据id删除-->
+    <delete id="deletePlan" parameterType="string">
+        update plans set pstate=-1 where pid = #{pid}
+    </delete>
+    <!--联合查询-->
+    <select id="searchPlan"  resultType="Plan">
+        select * from plans where pstate!=-1 and rstate = #{plan.rstate}
+        <choose>
+            <when test="plan.pname !=null and plan.pname!=''">
+                and pname like concat('%',#{plan.pname},'%')
+            </when>
+            <when test="plan.tid !=null and plan.tid !=''">
+                and tid = #{plan.tid}
+            </when>
+            <when test="plan.pstart !=null and plan.pstart!=''and pstart2 !=null and pstart2 !=''">
+                and STR_TO_DATE( pstart,'%Y-%m-%d') between STR_TO_DATE( #{plan.pstart},'%Y-%m-%d') and STR_TO_DATE(#{pstart2},'%Y-%m-%d');
+            </when>
+            <when test="plan.pend !=null and plan.pend!='' and pend2 !=null and pend2!=''">
+                and STR_TO_DATE( pend,'%Y-%m-%d') between STR_TO_DATE(#{plan.pend},'%Y-%m-%d') and STR_TO_DATE( #{pend2},'%Y-%m-%d');
+            </when>
+        </choose>
+    </select>
+</mapper>
